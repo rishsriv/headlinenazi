@@ -126,7 +126,13 @@ class Handler(webapp2.RequestHandler):
 
 class Login(Handler):
     def get(self):
-        self.render("login.html")
+        message_id = self.request.get('message_id')
+        if message_id not in ['1', '2']:
+            self.render('login.html')
+        elif message_id == '1':
+            self.render('login.html', message="You must log in to vote. If you don't have an account yet, please sign up!")
+        elif message_id == '2':
+            self.render('login.html', message="You must log in to submit. If you don't have an account yet, please sign up!")
 
     def post(self):
         username = self.request.get('username')

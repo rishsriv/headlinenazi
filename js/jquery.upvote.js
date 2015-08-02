@@ -141,7 +141,7 @@
     }
 
     function post_vote(post_type, post_id, action){
-        $.ajax({
+        var response = $.ajax({
             url: 'vote',
             type: 'POST',
             data: {
@@ -150,6 +150,14 @@
                 action: action
             },
         });
+
+        response.done(function(data) {
+             if (data === 'you must log in'){
+                window.location = '/login.html?message_id=1'
+            };
+        });
+
+       
     }
 
     function upvote() {

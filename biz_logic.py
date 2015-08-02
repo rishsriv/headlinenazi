@@ -80,7 +80,7 @@ class Submit(basic.Handler):
 		if self.user:
 			self.render('submit.html')
 		else:
-			self.render('signup.html', message = 'Please register before submitting a link')
+			self.render('login.html?message_id=2')
 
 	def post(self):
 		if self.user:
@@ -146,7 +146,7 @@ class Post(basic.Handler):
 				tot_downvotes = tot_downvotes, alternative_headlines = alternatives,
 				upvoted = upvoted, downvoted = downvoted, post_id = post_id)
 		else:
-			self.render('error.html')
+			self.response.out.write('an error occured')
 	
 	def post(self):
 		if self.user:
@@ -215,8 +215,9 @@ class Vote(basic.Handler):
 					self.user.upvoted_alt_headlines.remove(post_id)
 				self.user.put()
 				h.put()
+			self.response.out.write('success')
 		else:
-			self.redirect('signup.html')
+			self.response.out.write('you must log in')
 
 app = webapp2.WSGIApplication([('/', Home),
 							   ('/login/?(?:.html)?', basic.Login),
