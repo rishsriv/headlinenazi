@@ -80,7 +80,7 @@ class Submit(basic.Handler):
 		if self.user:
 			self.render('submit.html')
 		else:
-			self.render('login.html?message_id=2')
+			self.redirect('login.html?message_id=2')
 
 	def post(self):
 		if self.user:
