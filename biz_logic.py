@@ -40,6 +40,7 @@ class Home(basic.Handler):
 		else:
 			offset = 0
 		top_5_headlines = db.GqlQuery("SELECT * FROM Headline ORDER BY added_at DESC LIMIT 5 OFFSET %s"%offset)
+		tot_headlines = db.Query(Headline).count()
 		headlines_to_show = []
 		count = 0
 		for headline in top_5_headlines:
@@ -61,7 +62,17 @@ class Home(basic.Handler):
 				'upvoted': upvoted,
 				'downvoted': downvoted
 				})
-		self.render('index.html', headlines_to_show = headlines_to_show, offset = offset + 5)
+		if offset - 5 >= 0:
+			show_prev = True
+		else:
+			show_prev = False
+		
+		if offset + 5 < tot_headlines:
+			show_next = True
+		else:
+			show_next = False
+		self.render('index.html', headlines_to_show = headlines_to_show, 
+			offset = offset, show_prev = show_prev, show_next = show_next)
 
 class Submit(basic.Handler):
 	#this enables users to submit headlines

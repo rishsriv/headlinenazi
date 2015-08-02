@@ -115,9 +115,17 @@
                 {%endfor%}
                 <!-- Pager -->
                 <ul class="pager">
-                    <li class="next">
-                        <a href="#">Next 5 &rarr;</a>
+                    {%if show_prev == True %}
+                    <li class="previous">
+                        <a href="?offset={{offset - 5}}">&larr; Previous 5</a>
                     </li>
+                    {%endif%}
+
+                    {%if show_next == True%}
+                    <li class="next">
+                        <a href="?offset={{offset + 5}}">Next 5 &rarr;</a>
+                    </li>
+                    {%endif%}
                 </ul>
             </div>
         </div>
