@@ -48,12 +48,19 @@
     var dot_count_css = '.' + count_css;
     var enabled_css = 'upvote-enabled';
     var dot_enabled_css = '.' + enabled_css;
+    var post_type_css = 'post-type';
+    var dot_post_type_css = '.' + post_type_css;
+    var post_id_css = 'post-id';
+    var dot_post_id_css = '.' + post_id_css;
 
     function init(options) {
         return this.each(function() {
             methods.destroy.call(this);
 
             var count = parseInt($(this).find(dot_count_css).text());
+            var post_id = $(this).find(dot_post_id_css).text();
+            var post_type = $(this).find(dot_post_type_css).text();
+
             count = isNaN(count) ? 0 : count;
             var initial = {
                 id: $(this).attr('data-id'),
@@ -61,6 +68,8 @@
                 upvoted: $(this).find(dot_upvoted_css).size(),
                 downvoted: $(this).find(dot_downvoted_css).size(),
                 starred: $(this).find(dot_starred_css).size(),
+                post_id: post_id,
+                post_type: post_type,
                 callback: function() {}
             };
 
@@ -131,11 +140,24 @@
         data.callback(data);
     }
 
+    function post_vote(post_type, post_id, action){
+        $.ajax({
+            url: 'vote',
+            type: 'POST',
+            data: {
+                post_type: post_type,
+                post_id: post_id,
+                action: action
+            },
+        });
+    }
+
     function upvote() {
         var data = this.data(namespace);
         if (data.upvoted) {
             data.upvoted = false;
             --data.count;
+            post_vote(data.post_type, data.post_id, 'upvote-to-neutral');
         }
         else {
             data.upvoted = true;
@@ -143,6 +165,10 @@
             if (data.downvoted) {
                 data.downvoted = false;
                 ++data.count;
+                post_vote(data.post_type, data.post_id, 'downvote-to-upvote');
+            }
+            else{
+                post_vote(data.post_type, data.post_id, 'neutral-to-upvote');
             }
         }
         render(this);
@@ -155,6 +181,7 @@
         if (data.downvoted) {
             data.downvoted = false;
             ++data.count;
+            post_vote(data.post_type, data.post_id, 'downvote-to-neutral');
         }
         else {
             data.downvoted = true;
@@ -162,6 +189,10 @@
             if (data.upvoted) {
                 data.upvoted = false;
                 --data.count;
+                post_vote(data.post_type, data.post_id, 'upvote-to-downvote');
+            }
+            else {
+                post_vote(data.post_type, data.post_id, 'neutral-to-downvote');
             }
         }
         render(this);

@@ -89,46 +89,30 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                {%for headline in headlines_to_show%}
                 <div class="post-preview">
                     <div class="row">
                         <div class="col-md-1">
-                            <div id="topic0" class="upvote">
-                                <a class="upvote"></a>
-                                <span class="count">0</span>
-                                <a class="downvote"></a>
+                            <div id="{{headline['id']}}" class="upvote">
+                                {%if headline['upvoted'] == True%}<a class="upvote upvote-on"></a>{%else%}<a class="upvote"></a>{%endif%}
+                                <span class="count">{{headline['tot_upvotes'] - headline['tot_downvotes']}}</span>
+                                <span class="post-id" style="display: none;">{{headline['id']}}</span>
+                                <span class="post-type" style="display: none;">main-headline</span>
+                                {%if headline['downvoted'] == True%}<a class="downvote downvote-on"></a>{%else%}<a class="downvote"></a>{%endif%}
                             </div>
                         </div>
                         <div class="col-md-11">
-                            <a href="post.html">
+                            <a href="post?post_id={{headline['id']}}">
                                 <h2 class="post-title">
-                                    Astounding new discovery by NASA shocks scientists
+                                    {{headline['headline']}}
                                 </h2>
                             </a>
                         </div>
                     </div>
-                    <p class="post-meta"><br>7 people voted | <a href="#">Join the discussion about this headline</a></p>
+                    <p class="post-meta"><br>{{headline['tot_votes']}} people voted | <a href="post?post_id={{headline['id']}}">Join the discussion about this headline</a></p>
                 </div>
                 <hr>
-                <div class="post-preview">
-                    <div class="row">
-                        <div class="col-md-1">
-                            <div id="topic1" class="upvote">
-                                <a class="upvote"></a>
-                                <span class="count">0</span>
-                                <a class="downvote"></a>
-                            </div>
-                        </div>
-                        <div class="col-md-11">
-                            <a href="post.html">
-                                <h2 class="post-title">
-                                    Astounding new discovery by NASA shocks scientists
-                                </h2>
-                            </a>
-                        </div>
-                    </div>
-                    <p class="post-meta"><br>7 people voted | <a href="#">Join the discussion about this headline</a></p>
-                </div>
-
+                {%endfor%}
                 <!-- Pager -->
                 <ul class="pager">
                     <li class="next">
@@ -163,14 +147,6 @@
                                 </span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                        </li>
                     </ul>
                     <p class="copyright text-muted">Copyright &copy; HeadlineNazi 2015</p>
                 </div>
@@ -183,8 +159,9 @@
     <script src="js/clean-blog.min.js"></script>
 
     <script>
-        $('#topic0').upvote();
-        $('#topic1').upvote();
+    {%for headline in headlines_to_show%}
+        $("#{{headline['id']}}").upvote();
+    {%endfor%}
     </script>
 
 </body>

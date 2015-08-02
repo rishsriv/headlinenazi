@@ -77,9 +77,11 @@
                         <div class="row">
                             <div class="col-md-1">
                                 <div id="headline" class="upvote">
-                                    <a class="upvote"></a>
-                                    <span class="count" style="color: white;">0</span>
-                                    <a class="downvote"></a>
+                                    {%if upvoted == True%}<a class="upvote upvote-on"></a>{%else%}<a class="upvote"></a>{%endif%}
+                                    <span class="count">{{tot_upvotes - tot_downvotes}}</span>
+                                    <span class="post-id" style="display: none;">{{post_id}}</span>
+                                    <span class="post-type" style="display: none;">main-headline</span>
+                                    {%if downvoted == True%}<a class="downvote downvote-on"></a>{%else%}<a class="downvote"></a>{%endif%}
                                 </div>
                             </div>
                             <div class="col-md-11">
@@ -103,95 +105,44 @@
                     <div class="col-md-6">
                         <h2>Submit an alternative headline</h2>
                         <br>
-                        <form style="font-family: sans-serif;">
+                        <form style="font-family: sans-serif;" method="POST" action="post">
                             <div class="form-group">
-                                <label>Alternative Headline</label>
-                                <textarea class="form-control" rows="5" id="alternative_headline"></textarea>
+                                <label>Alternative Headline *</label>
+                                <textarea class="form-control" rows="5" id="alternative_headline" name="alternative_headline"></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label>(Optional) Why do you think this headline is better than the original? *</label>
-                                <textarea class="form-control" rows="3" id="alternative_headline_reason"></textarea>
+                                <label>(Optional) Why do you think this headline is better than the original?</label>
+                                <textarea class="form-control" rows="3" id="alternative_headline_comment" name="alternative_headline_comment"></textarea>
                             </div>
+                            <input type="hidden" name="orig_headline_id" value="{{post_id}}">
                             <button type="submit" class="btn btn-default">Submit</button>
                         </form>
                     </div>
 
                     <div class="col-md-6">
-                        <h2>Look at what others submitted</h2>
+                        <h2>Vote for your favourite alternative headlines</h2>
                         <br>
+                        {%for headline in alternative_headlines%}
                         <div class="post-preview">
                             <div class="row">
                                 <div class="col-md-2">
-                                    <div id="headline_alternative_0" class="upvote">
-                                        <a class="upvote"></a>
-                                        <span class="count">0</span>
+                                    <div id="{{headline['id']}}" class="upvote">
+                                        {%if headline['upvoted'] == True%}<a class="upvote upvote-on"></a>{%else%}<a class="upvote"></a>{%endif%}
+                                        <span class="count">{{headline['tot_votes']}}</span>
+                                        <span class="post-id" style="display: none;">{{headline['id']}}</span>
+                                        <span class="post-type" style="display: none;">alt-headline</span>
                                     </div>
                                 </div>
                                 <div class="col-md-10">
                                     <h4 class="post-title">
-                                        Cold Pluto has a Warm Heart
+                                        {{headline['alt_headline']}}
                                     </h4>
                                 </div>
                             </div>
-                            <br>
-                            <p class="post-meta">Submitted by <a href="#">username</a></p>
+                            <p class="post-meta">Submitted by <a href="#">{{headline['submitted_by']}}</a> at {{headline['added_at']}}</p>
                         </div>
-
-                        <div class="post-preview">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div id="headline_alternative_1" class="upvote">
-                                        <a class="upvote"></a>
-                                        <span class="count">0</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
-                                    <h4 class="post-title">
-                                        Cold Pluto has a Warm Heart
-                                    </h4>
-                                </div>
-                            </div>
-                            <br>
-                            <p class="post-meta">Submitted by <a href="#">username</a></p>
-                        </div>
-
-                        <div class="post-preview">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div id="headline_alternative_2" class="upvote">
-                                        <a class="upvote"></a>
-                                        <span class="count">0</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
-                                    <h4 class="post-title">
-                                        Cold Pluto has a Warm Heart
-                                    </h4>
-                                </div>
-                            </div>
-                            <br>
-                            <p class="post-meta">Submitted by <a href="#">username</a></p>
-                        </div>
-
-                        <div class="post-preview">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div id="headline_alternative_2" class="upvote">
-                                        <a class="upvote"></a>
-                                        <span class="count">0</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
-                                    <h4 class="post-title">
-                                        Cold Pluto has a Warm Heart
-                                    </h4>
-                                </div>
-                            </div>
-                            <br>
-                            <p class="post-meta">Submitted by <a href="#">username</a></p>
-                        </div>
-                    </div>
+                        {%endfor%}
                     </div>
                 </div>
             </div>
@@ -222,14 +173,6 @@
                                 </span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                        </li>
                     </ul>
                     <p class="copyright text-muted">Copyright &copy; Your Website 2014</p>
                 </div>
@@ -245,14 +188,13 @@
     <script src="js/bootstrap.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="js/clean-blog.min.js"></script>
+    <script src="js/clean-blog.js"></script>
 
     <script>
         $('#headline').upvote();
-        $('#headline_alternative_0').upvote();
-        $('#headline_alternative_1').upvote();
-        $('#headline_alternative_2').upvote();
-        $('#headline_alternative_3').upvote();
+        {%for headline in alternative_headlines%}
+        $("#{{headline['id']}}").upvote();
+        {%endfor%}
     </script>
 
 </body>
